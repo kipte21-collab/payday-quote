@@ -791,23 +791,23 @@
                 class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 ring-emerald-400 focus:border-transparent" />
             </div>
 
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label for="std-employees" class="mb-1.5 block text-sm font-medium text-slate-700">직원 수</label>
-                <input type="number" id="std-employees" min="0" value="10"
-                  class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 ring-emerald-400 focus:border-transparent" />
-              </div>
-              <div>
-                <label for="std-start-month" class="mb-1.5 block text-sm font-medium text-slate-700">도입예정월</label>
-                <select id="std-start-month" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 ring-emerald-400 focus:border-transparent bg-white">
-                  <option value="">— 선택 —</option>
-                  <option value="1월">1월</option><option value="2월">2월</option><option value="3월">3월</option>
-                  <option value="4월">4월</option><option value="5월">5월</option><option value="6월">6월</option>
-                  <option value="7월">7월</option><option value="8월">8월</option><option value="9월">9월</option>
-                  <option value="10월">10월</option><option value="11월">11월</option><option value="12월">12월</option>
-                  <option value="신규설립">신규설립</option>
-                </select>
-              </div>
+            <div>
+              <label for="std-employees" class="mb-1.5 block text-sm font-medium text-slate-700">직원 수</label>
+              <input type="number" id="std-employees" min="0" value="10"
+                class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 ring-emerald-400 focus:border-transparent" />
+              <p class="mt-1 text-xs text-slate-500">보수표·인당 과금 항목 계산에 사용됩니다.</p>
+            </div>
+
+            <div>
+              <label for="std-start-month" class="mb-1.5 block text-sm font-medium text-slate-700">도입예정월</label>
+              <select id="std-start-month" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:ring-2 ring-emerald-400 focus:border-transparent bg-white">
+                <option value="">— 선택 —</option>
+                <option value="1월">1월</option><option value="2월">2월</option><option value="3월">3월</option>
+                <option value="4월">4월</option><option value="5월">5월</option><option value="6월">6월</option>
+                <option value="7월">7월</option><option value="8월">8월</option><option value="9월">9월</option>
+                <option value="10월">10월</option><option value="11월">11월</option><option value="12월">12월</option>
+                <option value="신규설립">신규설립</option>
+              </select>
             </div>
 
             <!-- 기본 서비스 -->
@@ -853,6 +853,11 @@
                       <p class="text-xs text-slate-500">기본 80,000원 + 도입월 급여보수 × 월별비율 / 신규설립: 100,000원</p>
                     </div>
                     <span class="shrink-0 rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-500">1회</span>
+                  </div>
+                  <div class="ml-7 flex items-center gap-2">
+                    <label class="text-xs text-slate-500 shrink-0">할인율</label>
+                    <input type="number" id="std-disc-setup" min="0" max="100" step="0.1" value="0" class="w-16 rounded-lg border border-slate-300 px-2 py-1 text-sm outline-none focus:ring-2 ring-rose-400 focus:border-transparent" />
+                    <span class="text-xs text-slate-400">%</span>
                   </div>
                 </li>
                 <li class="rounded-lg border border-slate-100 bg-slate-50 p-3 space-y-1.5">
@@ -956,17 +961,17 @@
               </ul>
             </fieldset>
 
-          </div>
-        </div>
+            <!-- ===== 추가 서비스 항목 ===== -->
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-medium text-slate-700">추가 서비스 항목</span>
+                <button type="button" id="std-btn-add-custom" class="flex items-center gap-1 rounded-lg bg-emerald-50 border border-emerald-200 px-2.5 py-1 text-xs font-semibold text-emerald-700 hover:bg-emerald-100">＋ 항목 추가</button>
+              </div>
+              <div id="std-custom-items-container" class="space-y-2"></div>
+              <p id="std-custom-items-empty" class="text-xs text-slate-400 text-center py-3">추가 서비스 항목이 없습니다.</p>
+            </div>
 
-        <!-- 추가 서비스 항목 -->
-        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm mt-4">
-          <div class="flex items-center justify-between mb-3">
-            <span class="text-sm font-medium text-slate-700">추가 서비스 항목</span>
-            <button type="button" id="std-btn-add-custom" class="flex items-center gap-1 rounded-lg bg-emerald-50 border border-emerald-200 px-2.5 py-1 text-xs font-semibold text-emerald-700 hover:bg-emerald-100">＋ 항목 추가</button>
           </div>
-          <div id="std-custom-items-container" class="space-y-2"></div>
-          <p id="std-custom-items-empty" class="text-xs text-slate-400 text-center py-3">추가 서비스 항목이 없습니다.</p>
         </div>
 
         <!-- 담당자 연락처 -->
@@ -1187,11 +1192,25 @@
     /* ===========================
        커스텀 항목 로드/저장
     =========================== */
+    /* 구형 {perEmployee, fixed} → 신형 {unitType, unitPrice, qty, discount} 변환 */
+    function migrateCustomItems(arr) {
+      const out = [];
+      (arr || []).forEach(function(item) {
+        if (!item) return;
+        if (item.unitType !== undefined) { out.push(item); return; }
+        const per = item.perEmployee || 0, fixed = item.fixed || 0;
+        const base = { qty: 0, billing: item.billing || 'monthly', discount: 0, enabled: item.enabled !== false };
+        if (per > 0)  out.push(Object.assign({}, base, { label: item.label || '', unitType: 'perEmployee', unitPrice: per }));
+        if (fixed > 0) out.push(Object.assign({}, base, { label: (item.label || '') + (per > 0 ? ' (정액)' : ''), unitType: 'fixed', unitPrice: fixed }));
+        if (per === 0 && fixed === 0) out.push(Object.assign({}, base, { label: item.label || '', unitType: 'perEmployee', unitPrice: 0 }));
+      });
+      return out;
+    }
     function loadCustomItems() {
       try {
         const raw = localStorage.getItem(CUSTOM_ITEMS_KEY);
         if (!raw) return [];
-        return JSON.parse(raw) || [];
+        return migrateCustomItems(JSON.parse(raw) || []);
       } catch(e) { return []; }
     }
     function saveCustomItems(items) { localStorage.setItem(CUSTOM_ITEMS_KEY, JSON.stringify(items)); }
@@ -1462,34 +1481,6 @@
       previewLines.appendChild(tr);
     }
 
-    function appendServiceLineRow(name, per, fixed, billing, n) {
-      const annual    = billing === 'annual';
-      const monthly   = per * n + fixed;
-      const yearLine  = annual ? monthly : monthly * 12;
-      let unitMain = '—', unitSub = '';
-      if (per > 0) { unitMain = formatWon(per); unitSub = '명당·월'; }
-      else if (fixed > 0 && n > 0) { unitMain = formatWon(Math.round(monthly / n)); unitSub = annual ? '명당·연(1회)' : '정액 분담·월'; }
-      else if (fixed > 0 && n === 0) { unitSub = '인원 입력 시'; }
-      const tr = document.createElement('tr');
-      tr.className = 'border-b border-slate-100 align-top';
-      const tdName = document.createElement('td');
-      tdName.className = 'py-2.5 pl-2 pr-1 text-slate-800 text-sm font-medium';
-      tdName.textContent = name;
-      tr.appendChild(tdName);
-      appendTdUnit(tr, unitMain, unitSub);
-      if (annual) {
-        const tdM = document.createElement('td');
-        tdM.className = 'py-2.5 px-1 text-right align-top tabular-nums text-slate-400';
-        tdM.innerHTML = '<span class="text-base font-medium">—</span><div class="mt-1 text-[10px] leading-tight text-slate-500">연 1회 청구</div>';
-        tr.appendChild(tdM);
-      } else {
-        appendTdMonthPlain(tr, formatWon(monthly));
-      }
-      appendTdYearPlain(tr, formatWon(yearLine));
-      previewLines.appendChild(tr);
-      return { monthly: annual ? 0 : monthly, yearly: yearLine };
-    }
-
     /* ===========================
        메인 렌더
     =========================== */
@@ -1618,7 +1609,7 @@
             + '<div class="mt-1 text-[10px] leading-tight text-slate-500">'
             + (billing === 'semi'   ? '반기 1회 청구<br/><span class="text-slate-400">(월 합계 제외)</span>' : '')
             + (billing === 'annual' ? '연 1회 청구<br/><span class="text-slate-400">(월 합계 제외)</span>' : '')
-            + (billing === 'once'   ? '1회 청구<br/><span class="text-slate-400">(월 합계 제외)</span>' : '')
+            + (billing === 'once'   ? '최초 1회 청구<br/><span class="text-slate-400">(월 합계 제외)</span>' : '')
             + '</div>';
         }
         tr.appendChild(tdM);
@@ -1734,12 +1725,45 @@
         addAddon('계약이전년도 급여대장 업로드 (' + months + '개월)', 'once', 0, a, formatWon(addonCfg.pastPayrollBase), '월당', getDisc('disc-past-payroll'));
       }
 
-      /* 커스텀 항목 렌더 */
+      /* 커스텀 항목 렌더 (Standard와 동일 모델: 인당/건당/정액 × 월별/연1회/반기/최초1회 + 할인) */
       customItems.forEach(function(item) {
         if (!item.enabled) return;
-        const res = appendServiceLineRow(item.label, item.perEmployee, item.fixed, item.billing, n);
-        totalMonth += res.monthly;
-        totalYear  += res.yearly;
+        const unitType  = item.unitType || 'perEmployee';
+        const unitPrice = item.unitPrice || 0;
+        const qty       = item.qty || 0;
+        const billing   = item.billing || 'monthly';
+
+        /* 1회분 금액 계산 */
+        let perOccurrence, uMain, uSub;
+        if (unitType === 'perEmployee') {
+          const cnt = qty > 0 ? qty : n;  /* 0이면 직원 수 사용 */
+          perOccurrence = unitPrice * cnt;
+          uMain = formatWon(unitPrice);
+          uSub  = '인당';
+        } else if (unitType === 'perCase') {
+          perOccurrence = unitPrice * qty;
+          uMain = formatWon(unitPrice);
+          uSub  = '건당(' + qty + '건)';
+        } else { /* fixed */
+          perOccurrence = unitPrice;
+          uMain = formatWon(unitPrice);
+          uSub  = '정액';
+        }
+
+        /* 과금방식별 월/연 환산 */
+        let grossMonthly, grossAnnual;
+        if (billing === 'monthly') {
+          grossMonthly = perOccurrence;
+          grossAnnual  = perOccurrence * 12;
+        } else if (billing === 'semi') {
+          grossMonthly = 0;
+          grossAnnual  = perOccurrence * 2;
+        } else { /* annual | once */
+          grossMonthly = 0;
+          grossAnnual  = perOccurrence;
+        }
+
+        addAddon(item.label, billing, grossMonthly, grossAnnual, uMain, uSub, item.discount || 0);
       });
 
       if (previewLines.children.length === 0) {
@@ -1885,6 +1909,7 @@
       customEmptyMsg.style.display = isEmpty ? '' : 'none';
 
       customItems.forEach(function(item, idx) {
+        const unitType = item.unitType || 'perEmployee'; /* perEmployee | perCase | fixed */
         const div = document.createElement('div');
         div.className = 'custom-item-row rounded-xl border border-slate-200 bg-white p-3 space-y-2';
         div.innerHTML = `
@@ -1892,7 +1917,7 @@
             <input type="checkbox" data-custom-idx="${idx}" class="custom-toggle h-4 w-4 rounded border-slate-300 text-indigo-600"
               ${item.enabled ? 'checked' : ''} />
             <input type="text" data-custom-idx="${idx}" data-field="label"
-              placeholder="항목명 (예: 경비처리대행)" value="${item.label}"
+              placeholder="항목명 (예: 제증명서 서식개발)" value="${item.label}"
               class="custom-field flex-1 rounded-lg border border-slate-300 px-2 py-1.5 text-sm outline-none focus:ring-2 ring-indigo-400 focus:border-transparent" />
             <button type="button" data-custom-del="${idx}"
               class="shrink-0 rounded-lg p-1 text-slate-400 hover:text-red-500 hover:bg-red-50">
@@ -1901,22 +1926,40 @@
           </div>
           <div class="grid grid-cols-3 gap-2">
             <div>
-              <label class="text-[11px] text-slate-500 mb-0.5 block">인당 단가(원/월)</label>
-              <input type="number" min="0" data-custom-idx="${idx}" data-field="perEmployee" value="${item.perEmployee}"
+              <label class="text-[11px] text-slate-500 mb-0.5 block">단가 방식</label>
+              <select data-custom-idx="${idx}" data-field="unitType"
+                class="custom-field w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm outline-none focus:ring-2 ring-indigo-400 focus:border-transparent bg-white">
+                <option value="perEmployee" ${unitType==='perEmployee'?'selected':''}>인당</option>
+                <option value="perCase"     ${unitType==='perCase'    ?'selected':''}>건당</option>
+                <option value="fixed"       ${unitType==='fixed'      ?'selected':''}>정액</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[11px] text-slate-500 mb-0.5 block">단가(원)</label>
+              <input type="number" min="0" data-custom-idx="${idx}" data-field="unitPrice" value="${item.unitPrice||0}"
                 placeholder="0" class="custom-field w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm outline-none focus:ring-2 ring-indigo-400 focus:border-transparent" />
             </div>
             <div>
-              <label class="text-[11px] text-slate-500 mb-0.5 block">정액(원)</label>
-              <input type="number" min="0" data-custom-idx="${idx}" data-field="fixed" value="${item.fixed}"
-                placeholder="0" class="custom-field w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm outline-none focus:ring-2 ring-indigo-400 focus:border-transparent" />
+              <label class="text-[11px] text-slate-500 mb-0.5 block">${unitType==='perCase' ? '건수' : unitType==='fixed' ? '(정액)' : '인원(0=직원수)'}</label>
+              <input type="number" min="0" data-custom-idx="${idx}" data-field="qty" value="${item.qty||0}" ${unitType==='fixed'?'disabled':''}
+                placeholder="0" class="custom-field w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm outline-none focus:ring-2 ring-indigo-400 focus:border-transparent disabled:bg-slate-100" />
             </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
             <div>
               <label class="text-[11px] text-slate-500 mb-0.5 block">과금 방식</label>
               <select data-custom-idx="${idx}" data-field="billing"
                 class="custom-field w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm outline-none focus:ring-2 ring-indigo-400 focus:border-transparent bg-white">
                 <option value="monthly" ${item.billing==='monthly'?'selected':''}>월별</option>
                 <option value="annual"  ${item.billing==='annual' ?'selected':''}>연 1회</option>
+                <option value="semi"    ${item.billing==='semi'   ?'selected':''}>반기(연2회)</option>
+                <option value="once"    ${item.billing==='once'   ?'selected':''}>최초 1회</option>
               </select>
+            </div>
+            <div>
+              <label class="text-[11px] text-slate-500 mb-0.5 block">할인율(%)</label>
+              <input type="number" min="0" max="100" step="0.1" data-custom-idx="${idx}" data-field="discount" value="${item.discount||0}"
+                placeholder="0" class="custom-field w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm outline-none focus:ring-2 ring-rose-400 focus:border-transparent" />
             </div>
           </div>
         `;
@@ -1926,7 +1969,7 @@
 
     /* 커스텀 항목 추가 */
     document.getElementById('btn-add-custom-item').addEventListener('click', function() {
-      customItems.push({ label: '', perEmployee: 0, fixed: 0, billing: 'monthly', enabled: true });
+      customItems.push({ label: '', unitType: 'perEmployee', unitPrice: 0, qty: 0, billing: 'monthly', discount: 0, enabled: true });
       saveCustomItems(customItems);
       renderCustomItems();
       render();
@@ -1953,9 +1996,11 @@
         const idx = parseInt(e.target.getAttribute('data-custom-idx'), 10);
         const field = e.target.getAttribute('data-field');
         if (field === 'label') customItems[idx].label = e.target.value;
-        else if (field === 'perEmployee') customItems[idx].perEmployee = parseInt(e.target.value, 10) || 0;
-        else if (field === 'fixed') customItems[idx].fixed = parseInt(e.target.value, 10) || 0;
+        else if (field === 'unitType') { customItems[idx].unitType = e.target.value; renderCustomItems(); }
+        else if (field === 'unitPrice') customItems[idx].unitPrice = parseInt(e.target.value, 10) || 0;
+        else if (field === 'qty') customItems[idx].qty = parseInt(e.target.value, 10) || 0;
         else if (field === 'billing') customItems[idx].billing = e.target.value;
+        else if (field === 'discount') customItems[idx].discount = parseFloat(e.target.value) || 0;
         saveCustomItems(customItems);
         render();
       }
@@ -2155,8 +2200,8 @@
             else el.value = item.addonState[id];
           });
         }
-        /* 커스텀 항목 복원 */
-        customItems = JSON.parse(JSON.stringify(item.customItems || []));
+        /* 커스텀 항목 복원 (구형 저장분은 신형으로 변환) */
+        customItems = migrateCustomItems(JSON.parse(JSON.stringify(item.customItems || [])));
         saveCustomItems(customItems);
         renderCustomItems();
         syncAllDiscountUi();
@@ -2902,7 +2947,7 @@ th,td{word-break:break-all;overflow-wrap:anywhere;}
           wrap.appendChild(og); wrap.appendChild(fn); tdM.appendChild(wrap);
         } else { tdM.className += ' font-medium text-slate-800'; tdM.textContent = formatWon(grossMonthly); }
       } else {
-        var lbl = billing === 'semi' ? '반기 1회 청구' : billing === 'annual' ? '연 1회 청구' : '1회 청구';
+        var lbl = billing === 'semi' ? '반기 1회 청구' : billing === 'annual' ? '연 1회 청구' : billing === 'once' ? '최초 1회 청구' : '1회 청구';
         tdM.innerHTML = '<span class="text-slate-400">—</span><div class="text-[10px] text-slate-500 mt-1">' + lbl + '<br/><span class="text-slate-400">(월 합계 제외)</span></div>';
       }
       tr.appendChild(tdM);
@@ -3147,29 +3192,42 @@ th,td{word-break:break-all;overflow-wrap:anywhere;}
       container.innerHTML = '';
       emptyMsg.style.display = stdCustomItems.length === 0 ? '' : 'none';
       stdCustomItems.forEach(function(item, idx) {
+        var unitType = item.unitType || 'perEmployee'; /* perEmployee | perCase */
         var div = document.createElement('div');
         div.className = 'rounded-xl border border-slate-200 bg-white p-3 space-y-2';
         div.innerHTML = '<div class="flex items-center gap-2">' +
           '<input type="checkbox" data-std-custom-idx="' + idx + '" class="std-custom-toggle h-4 w-4 rounded border-slate-300 text-emerald-600"' + (item.enabled ? ' checked' : '') + ' />' +
-          '<input type="text" data-std-custom-idx="' + idx + '" data-field="label" placeholder="항목명" value="' + (item.label||'') + '" class="std-custom-field flex-1 rounded-lg border border-slate-300 px-2 py-1.5 text-sm outline-none focus:ring-2 ring-emerald-400 focus:border-transparent" />' +
+          '<input type="text" data-std-custom-idx="' + idx + '" data-field="label" placeholder="항목명 (예: 제증명서 서식개발)" value="' + (item.label||'') + '" class="std-custom-field flex-1 rounded-lg border border-slate-300 px-2 py-1.5 text-sm outline-none focus:ring-2 ring-emerald-400 focus:border-transparent" />' +
           '<button type="button" data-std-custom-del="' + idx + '" class="shrink-0 rounded-lg p-1 text-slate-400 hover:text-red-500 hover:bg-red-50">' +
           '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button></div>' +
+          /* 1행: 단가 방식 + 단가 + 수량 */
           '<div class="grid grid-cols-3 gap-2">' +
-          '<div><label class="text-[11px] text-slate-500 mb-0.5 block">인당 단가(원/월)</label>' +
-          '<input type="number" min="0" data-std-custom-idx="' + idx + '" data-field="perEmployee" value="' + (item.perEmployee||0) + '" class="std-custom-field w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm outline-none focus:ring-2 ring-emerald-400 focus:border-transparent" /></div>' +
-          '<div><label class="text-[11px] text-slate-500 mb-0.5 block">정액(원)</label>' +
-          '<input type="number" min="0" data-std-custom-idx="' + idx + '" data-field="fixed" value="' + (item.fixed||0) + '" class="std-custom-field w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm outline-none focus:ring-2 ring-emerald-400 focus:border-transparent" /></div>' +
+          '<div><label class="text-[11px] text-slate-500 mb-0.5 block">단가 방식</label>' +
+          '<select data-std-custom-idx="' + idx + '" data-field="unitType" class="std-custom-field w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm outline-none focus:ring-2 ring-emerald-400 focus:border-transparent bg-white">' +
+          '<option value="perEmployee"' + (unitType==='perEmployee'?' selected':'') + '>인당</option>' +
+          '<option value="perCase"'     + (unitType==='perCase'    ?' selected':'') + '>건당</option>' +
+          '<option value="fixed"'       + (unitType==='fixed'      ?' selected':'') + '>정액</option>' +
+          '</select></div>' +
+          '<div><label class="text-[11px] text-slate-500 mb-0.5 block">단가(원)</label>' +
+          '<input type="number" min="0" data-std-custom-idx="' + idx + '" data-field="unitPrice" value="' + (item.unitPrice||0) + '" class="std-custom-field w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm outline-none focus:ring-2 ring-emerald-400 focus:border-transparent" /></div>' +
+          '<div><label class="text-[11px] text-slate-500 mb-0.5 block">' + (unitType==='perCase' ? '건수' : unitType==='fixed' ? '(정액)' : '인원(0=직원수)') + '</label>' +
+          '<input type="number" min="0" data-std-custom-idx="' + idx + '" data-field="qty" value="' + (item.qty||0) + '"' + (unitType==='fixed'?' disabled':'') + ' class="std-custom-field w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm outline-none focus:ring-2 ring-emerald-400 focus:border-transparent disabled:bg-slate-100" /></div></div>' +
+          /* 2행: 과금 방식 + 할인율 */
+          '<div class="grid grid-cols-2 gap-2">' +
           '<div><label class="text-[11px] text-slate-500 mb-0.5 block">과금 방식</label>' +
           '<select data-std-custom-idx="' + idx + '" data-field="billing" class="std-custom-field w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm outline-none focus:ring-2 ring-emerald-400 focus:border-transparent bg-white">' +
           '<option value="monthly"' + (item.billing==='monthly'?' selected':'') + '>월별</option>' +
           '<option value="annual"'  + (item.billing==='annual' ?' selected':'') + '>연 1회</option>' +
           '<option value="semi"'    + (item.billing==='semi'   ?' selected':'') + '>반기(연2회)</option>' +
-          '</select></div></div>';
+          '<option value="once"'    + (item.billing==='once'   ?' selected':'') + '>최초 1회</option>' +
+          '</select></div>' +
+          '<div><label class="text-[11px] text-slate-500 mb-0.5 block">할인율(%)</label>' +
+          '<input type="number" min="0" max="100" step="0.1" data-std-custom-idx="' + idx + '" data-field="discount" value="' + (item.discount||0) + '" class="std-custom-field w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm outline-none focus:ring-2 ring-rose-400 focus:border-transparent" /></div></div>';
         container.appendChild(div);
       });
     }
     document.getElementById('std-btn-add-custom').addEventListener('click', function() {
-      stdCustomItems.push({ label:'', perEmployee:0, fixed:0, billing:'monthly', enabled:true });
+      stdCustomItems.push({ label:'', unitType:'perEmployee', unitPrice:0, qty:0, billing:'monthly', discount:0, enabled:true });
       saveStdCustomItems(stdCustomItems);
       renderStdCustomItems();
       stdRender();
@@ -3186,9 +3244,11 @@ th,td{word-break:break-all;overflow-wrap:anywhere;}
         var idx = parseInt(e.target.getAttribute('data-std-custom-idx'));
         var field = e.target.getAttribute('data-field');
         if (field === 'label') stdCustomItems[idx].label = e.target.value;
-        else if (field === 'perEmployee') stdCustomItems[idx].perEmployee = parseInt(e.target.value)||0;
-        else if (field === 'fixed') stdCustomItems[idx].fixed = parseInt(e.target.value)||0;
+        else if (field === 'unitType') { stdCustomItems[idx].unitType = e.target.value; renderStdCustomItems(); }
+        else if (field === 'unitPrice') stdCustomItems[idx].unitPrice = parseInt(e.target.value)||0;
+        else if (field === 'qty') stdCustomItems[idx].qty = parseInt(e.target.value)||0;
         else if (field === 'billing') stdCustomItems[idx].billing = e.target.value;
+        else if (field === 'discount') stdCustomItems[idx].discount = parseFloat(e.target.value)||0;
         saveStdCustomItems(stdCustomItems); stdRender();
       }
     });
@@ -3235,7 +3295,8 @@ th,td{word-break:break-all;overflow-wrap:anywhere;}
       /* Set-up (최상단) */
       if (stdChecked('std-svc-setup')) {
         var setupAmt = stdSetupFee(payrollBase, startMonth);
-        stdAddRow(tbody, 'Set-up 비용' + (startMonth === '신규설립' ? ' (신규설립)' : ''), 'once', 0, setupAmt, '—', '', 0, totals);
+        var setupDisc = stdDisc('std-disc-setup');
+        stdAddRow(tbody, 'Set-up 비용' + (startMonth === '신규설립' ? ' (신규설립)' : ''), 'once', 0, setupAmt, '—', '', setupDisc, totals);
       }
 
       /* 급여업무대행 */
@@ -3356,11 +3417,42 @@ th,td{word-break:break-all;overflow-wrap:anywhere;}
       stdCustomItems.forEach(function(item) {
         if (!item.enabled || !item.label) return;
         var billing = item.billing || 'monthly';
-        var m = (item.perEmployee || 0) * n + (item.fixed || 0);
-        var annual = billing === 'monthly' ? m * 12 : billing === 'semi' ? m * 2 : m;
-        var uMain = item.perEmployee > 0 ? formatWon(item.perEmployee) : (n > 0 && m > 0 ? formatWon(Math.round(m/n)) : '—');
-        var uSub  = item.perEmployee > 0 ? '명당·월' : (item.fixed > 0 ? '정액' : '');
-        stdAddRow(tbody, item.label, billing, m, annual, uMain, uSub, 0, totals);
+        var unitType = item.unitType || 'perEmployee';
+        var unitPrice = item.unitPrice || 0;
+        var qty = item.qty || 0;
+        var disc = item.discount || 0;
+
+        /* 1회분 금액 계산 */
+        var perOccurrence, uMain, uSub;
+        if (unitType === 'perEmployee') {
+          var cnt = qty > 0 ? qty : n;  /* 0이면 직원 수 사용 */
+          perOccurrence = unitPrice * cnt;
+          uMain = formatWon(unitPrice);
+          uSub  = '인당';
+        } else if (unitType === 'perCase') {
+          perOccurrence = unitPrice * qty;
+          uMain = formatWon(unitPrice);
+          uSub  = '건당(' + qty + '건)';
+        } else { /* fixed */
+          perOccurrence = unitPrice;
+          uMain = formatWon(unitPrice);
+          uSub  = '정액';
+        }
+
+        /* 과금방식별 월/연 환산 */
+        var grossMonthly, grossAnnual;
+        if (billing === 'monthly') {
+          grossMonthly = perOccurrence;
+          grossAnnual  = perOccurrence * 12;
+        } else if (billing === 'semi') {
+          grossMonthly = 0;
+          grossAnnual  = perOccurrence * 2;
+        } else { /* annual | once */
+          grossMonthly = 0;
+          grossAnnual  = perOccurrence;
+        }
+
+        stdAddRow(tbody, item.label, billing, grossMonthly, grossAnnual, uMain, uSub, disc, totals);
       });
 
       document.getElementById('std-preview-total-month').textContent = formatWon(totals.month);
