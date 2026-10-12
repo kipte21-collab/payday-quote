@@ -119,7 +119,7 @@
               <tr><td class="px-3 py-2 text-slate-700">급여대납</td><td class="px-2 py-1"><input type="number" id="cfg-pay-transfer-base" placeholder="20000" class="cfg-inp w-full rounded border border-slate-300 px-2 py-1 text-sm"/></td><td class="px-2 py-1"><input type="number" id="cfg-pay-transfer-over" placeholder="200" class="cfg-inp w-full rounded border border-slate-300 px-2 py-1 text-sm"/></td><td class="px-2 py-1"><input type="number" id="cfg-pay-transfer-threshold" placeholder="100" class="cfg-inp w-full rounded border border-slate-300 px-2 py-1 text-sm"/></td></tr>
               <tr><td class="px-3 py-2 text-slate-700">사업장별 신고관리</td><td class="px-2 py-1"><input type="number" id="cfg-branch-base" placeholder="10000" class="cfg-inp w-full rounded border border-slate-300 px-2 py-1 text-sm"/></td><td class="px-2 py-1 text-slate-300 text-center">—</td><td class="px-2 py-1 text-slate-300 text-center">—</td></tr>
               <tr><td class="px-3 py-2 text-slate-700">일용직 신고대행</td><td class="px-2 py-1"><input type="number" id="cfg-daily-base" placeholder="20000" class="cfg-inp w-full rounded border border-slate-300 px-2 py-1 text-sm"/></td><td class="px-2 py-1"><input type="number" id="cfg-daily-over" placeholder="2000" class="cfg-inp w-full rounded border border-slate-300 px-2 py-1 text-sm"/></td><td class="px-2 py-1"><input type="number" id="cfg-daily-threshold" placeholder="10" class="cfg-inp w-full rounded border border-slate-300 px-2 py-1 text-sm"/></td></tr>
-              <tr><td class="px-3 py-2 text-slate-700">근로소득 간이지급명세서</td><td class="px-2 py-1"><input type="number" id="cfg-wage-stmt-base" placeholder="150000" class="cfg-inp w-full rounded border border-slate-300 px-2 py-1 text-sm"/></td><td class="px-2 py-1"><input type="number" id="cfg-wage-stmt-over" placeholder="2000" class="cfg-inp w-full rounded border border-slate-300 px-2 py-1 text-sm"/></td><td class="px-2 py-1"><input type="number" id="cfg-wage-stmt-threshold" placeholder="50" class="cfg-inp w-full rounded border border-slate-300 px-2 py-1 text-sm"/></td></tr>
+              <tr><td class="px-3 py-2 text-slate-700">근로소득 간이지급명세서</td><td class="px-2 py-1"><input type="number" id="cfg-wage-stmt-base" placeholder="20000" class="cfg-inp w-full rounded border border-slate-300 px-2 py-1 text-sm"/></td><td class="px-2 py-1"><input type="number" id="cfg-wage-stmt-over" placeholder="200" class="cfg-inp w-full rounded border border-slate-300 px-2 py-1 text-sm"/></td><td class="px-2 py-1"><input type="number" id="cfg-wage-stmt-threshold" placeholder="50" class="cfg-inp w-full rounded border border-slate-300 px-2 py-1 text-sm"/></td></tr>
               <tr><td class="px-3 py-2 text-slate-700">사업소득 간이지급명세서</td><td class="px-2 py-1"><input type="number" id="cfg-biz-stmt-base" placeholder="30000" class="cfg-inp w-full rounded border border-slate-300 px-2 py-1 text-sm"/></td><td class="px-2 py-1"><input type="number" id="cfg-biz-stmt-over" placeholder="500" class="cfg-inp w-full rounded border border-slate-300 px-2 py-1 text-sm"/></td><td class="px-2 py-1"><input type="number" id="cfg-biz-stmt-threshold" placeholder="50" class="cfg-inp w-full rounded border border-slate-300 px-2 py-1 text-sm"/></td></tr>
               <tr><td class="px-3 py-2 text-slate-700">기타소득 간이지급명세서</td><td class="px-2 py-1"><input type="number" id="cfg-etc-stmt-base" placeholder="30000" class="cfg-inp w-full rounded border border-slate-300 px-2 py-1 text-sm"/></td><td class="px-2 py-1"><input type="number" id="cfg-etc-stmt-over" placeholder="500" class="cfg-inp w-full rounded border border-slate-300 px-2 py-1 text-sm"/></td><td class="px-2 py-1"><input type="number" id="cfg-etc-stmt-threshold" placeholder="50" class="cfg-inp w-full rounded border border-slate-300 px-2 py-1 text-sm"/></td></tr>
               <tr><td class="px-3 py-2 text-slate-700">중도퇴사자 지급명세서</td><td class="px-2 py-1 text-slate-300 text-center">—</td><td class="px-2 py-1"><input type="number" id="cfg-mid-leave-over" placeholder="2000" class="cfg-inp w-full rounded border border-slate-300 px-2 py-1 text-sm"/></td><td class="px-2 py-1 text-slate-300 text-center">—</td></tr>
@@ -405,9 +405,9 @@
                     <input type="checkbox" id="svc-wage-stmt" class="addon-cb mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600" />
                     <div class="flex-1 text-sm">
                       <label for="svc-wage-stmt" class="cursor-pointer font-medium text-slate-800">근로소득 간이지급명세서 제출</label>
-                      <p class="text-xs text-slate-500">150,000원 + 50인 초과 인당 2,000원 · 반기 1회 · 급여관리 인원 기준</p>
+                      <p class="text-xs text-slate-500">월 20,000원 + 50인 초과 인당 200원 · 매월 제출 · 급여관리 인원 기준</p>
                     </div>
-                    <span class="shrink-0 rounded-full bg-violet-50 px-2 py-0.5 text-[10px] font-medium text-violet-600">반기(연2)</span>
+                    <span class="shrink-0 rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-medium text-blue-600">월별</span>
                   </div>
                   <div class="addon-disc-row ml-7 flex items-center gap-2">
                     <label class="text-xs text-slate-500 shrink-0">할인율</label>
@@ -912,7 +912,7 @@
                   <div class="ml-7 flex items-center gap-2"><label class="text-xs text-slate-500 shrink-0">할인율</label><input type="number" id="std-disc-daily" min="0" max="100" step="0.1" value="0" class="w-16 rounded-lg border border-slate-300 px-2 py-1 text-sm outline-none focus:ring-2 ring-rose-400"/><span class="text-xs text-slate-400">%</span></div>
                 </li>
                 <li class="rounded-lg border border-slate-100 bg-slate-50 p-3 space-y-1.5">
-                  <div class="flex items-start gap-3"><input type="checkbox" id="std-svc-wage-stmt" class="mt-1 h-4 w-4 rounded border-slate-300 text-emerald-600"/><div class="flex-1 text-sm"><label for="std-svc-wage-stmt" class="cursor-pointer font-medium text-slate-800">근로소득 간이지급명세서 제출</label><p class="text-xs text-slate-500">150,000원 + 50인 초과 인당 2,000원 · 반기</p></div><span class="shrink-0 rounded-full bg-violet-50 px-2 py-0.5 text-[10px] font-medium text-violet-600">반기(연2)</span></div>
+                  <div class="flex items-start gap-3"><input type="checkbox" id="std-svc-wage-stmt" class="mt-1 h-4 w-4 rounded border-slate-300 text-emerald-600"/><div class="flex-1 text-sm"><label for="std-svc-wage-stmt" class="cursor-pointer font-medium text-slate-800">근로소득 간이지급명세서 제출</label><p class="text-xs text-slate-500">월 20,000원 + 50인 초과 인당 200원 · 매월 제출</p></div><span class="shrink-0 rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-medium text-blue-600">월별</span></div>
                   <div class="ml-7 flex items-center gap-2"><label class="text-xs text-slate-500 shrink-0">할인율</label><input type="number" id="std-disc-wage-stmt" min="0" max="100" step="0.1" value="0" class="w-16 rounded-lg border border-slate-300 px-2 py-1 text-sm outline-none focus:ring-2 ring-rose-400"/><span class="text-xs text-slate-400">%</span></div>
                 </li>
                 <li class="rounded-lg border border-slate-100 bg-slate-50 p-3 space-y-1.5">
@@ -1094,7 +1094,7 @@
       payTransferBase: 20000,  payTransferOver: 200,    payTransferThreshold: 100,
       branchBase: 10000,
       dailyBase: 20000,        dailyOver: 2000,         dailyThreshold: 10,
-      wageStmtBase: 150000,    wageStmtOver: 2000,      wageStmtThreshold: 50,
+      wageStmtBase: 20000,     wageStmtOver: 200,       wageStmtThreshold: 50,
       bizStmtBase: 30000,      bizStmtOver: 500,        bizStmtThreshold: 50,
       etcStmtBase: 30000,      etcStmtOver: 500,        etcStmtThreshold: 50,
       midLeaveOver: 2000,
@@ -1110,7 +1110,12 @@
       try {
         const raw = localStorage.getItem(ADDON_CFG_KEY);
         if (!raw) return Object.assign({}, ADDON_CFG_DEFAULTS);
-        return Object.assign({}, ADDON_CFG_DEFAULTS, JSON.parse(raw));
+        const saved = JSON.parse(raw);
+        /* 근로소득 간이지급명세서 구 기본값(반기 150,000 + 인당 2,000)은 신규 기본값으로 대체 */
+        if (saved.wageStmtBase === 150000 && saved.wageStmtOver === 2000) {
+          delete saved.wageStmtBase; delete saved.wageStmtOver;
+        }
+        return Object.assign({}, ADDON_CFG_DEFAULTS, saved);
       } catch(e) { return Object.assign({}, ADDON_CFG_DEFAULTS); }
     }
     function saveAddonCfg(cfg) { localStorage.setItem(ADDON_CFG_KEY, JSON.stringify(cfg)); }
@@ -1656,13 +1661,12 @@
         const uMain = dn > 0 ? formatWon(Math.round(m / dn)) : '—';
         addAddon('일용직 신고대행 (' + dn + '명)', 'monthly', m, m * 12, uMain, dn > 0 ? '인당·월' : '', getDisc('disc-daily'));
       }
-      /* 4. 근로소득 간이지급명세서 (반기/연2회) */
+      /* 4. 근로소득 간이지급명세서 (매월 제출) */
       if (addonChecked('svc-wage-stmt')) {
         const base = addonCfg.wageStmtBase, over = addonCfg.wageStmtOver, thr = addonCfg.wageStmtThreshold;
-        const once = base + Math.max(0, n - thr) * over;
-        const annual = once * 2;
-        const uMain = n > 0 ? formatWon(Math.round(annual / n)) : '—';
-        addAddon('근로소득 간이지급명세서 제출', 'semi', 0, annual, uMain, n > 0 ? '인당·연' : '', getDisc('disc-wage-stmt'));
+        const m = base + Math.max(0, n - thr) * over;
+        const uMain = n > 0 ? formatWon(Math.round(m / n)) : '—';
+        addAddon('근로소득 간이지급명세서 제출', 'monthly', m, m * 12, uMain, n > 0 ? '인당·월' : '', getDisc('disc-wage-stmt'));
       }
       /* 5. 사업소득 간이지급명세서 (월별) */
       if (addonChecked('svc-biz-stmt')) {
@@ -3384,8 +3388,8 @@ th,td{word-break:break-all;overflow-wrap:anywhere;}
           var b=stdInp('std-inp-branch'); var m=b*20000; return {m:m,a:m*12,u:formatWon(20000),us:'사업장당·월'}; } },
         { id:'std-svc-daily', label:'일용직 신고대행', billing:'monthly', calc:function(){
           var dn=stdInp('std-inp-daily'); var m=50000+Math.max(0,dn-10)*5000; var u=dn>0?formatWon(Math.round(m/dn)):'—'; return {m:m,a:m*12,u:u,us:dn>0?'인당·월':''}; } },
-        { id:'std-svc-wage-stmt', label:'근로소득 간이지급명세서 제출', billing:'semi', calc:function(){
-          var once=150000+Math.max(0,n-50)*2000; var a=once*2; var u=n>0?formatWon(Math.round(a/n)):'—'; return {m:0,a:a,u:u,us:n>0?'인당·연':''}; } },
+        { id:'std-svc-wage-stmt', label:'근로소득 간이지급명세서 제출', billing:'monthly', calc:function(){
+          var m=20000+Math.max(0,n-50)*200; var u=n>0?formatWon(Math.round(m/n)):'—'; return {m:m,a:m*12,u:u,us:n>0?'인당·월':''}; } },
         { id:'std-svc-biz-stmt', label:'사업소득 간이지급명세서', billing:'monthly', calc:function(){
           var bn=stdInp('std-inp-biz-stmt'); var m=30000+Math.max(0,bn-10)*3000; var u=bn>0?formatWon(Math.round(m/bn)):'—'; return {m:m,a:m*12,u:u,us:bn>0?'인당·월':''}; } },
         { id:'std-svc-etc-stmt', label:'기타소득 간이지급명세서', billing:'monthly', calc:function(){
