@@ -1131,12 +1131,12 @@
         capped: true, raw: per, max: max,
         gm: billing === 'monthly' ? max : 0,
         ga: max * times,
-        period: billing === 'monthly' ? '월' : billing === 'semi' ? '반기' : billing === 'annual' ? '연' : '1회',
       };
     }
-    function maxNoteHtml(c) {
-      return '<span class="text-slate-500">산출</span> <span class="font-medium text-slate-700">' + formatWon(c.raw) + '원</span>'
-        + ' → <span class="font-semibold text-amber-700">MAX ' + formatWon(c.max) + '원/' + c.period + ' 적용</span>';
+    /* MAX 적용 시 단가 표시를 상한 금액 비율로 환산 (견적서에는 MAX 문구를 표기하지 않음) */
+    function scaleUnitForMax(unitMain, cap) {
+      const v = parseFloat(String(unitMain || '').replace(/,/g, ''));
+      return isNaN(v) ? unitMain : formatWon(Math.round(v * cap.max / cap.raw));
     }
 
     function loadAddonCfg() {
@@ -1571,7 +1571,7 @@
         const cap = svcKey ? applyAddonMax(svcKey, billing, grossMonthly, grossAnnual) : { capped: false };
         if (cap.capped) {
           grossMonthly = cap.gm; grossAnnual = cap.ga;
-          unitMain = formatWon(cap.max); unitSub = 'MAX·' + cap.period;
+          unitMain = scaleUnitForMax(unitMain, cap);
         }
         /* 할인 기준: 연 금액 기준으로 계산 */
         const grossForDisc = (billing === 'monthly') ? grossAnnual : grossAnnual;
@@ -1602,12 +1602,6 @@
           nameDiv.appendChild(subSpan);
         }
         tdN.appendChild(nameDiv);
-        if (cap.capped) {
-          const capNote = document.createElement('div');
-          capNote.className = 'mt-1 rounded-md border border-amber-200 bg-amber-50 px-2 py-1 text-[11px] leading-relaxed text-slate-600';
-          capNote.innerHTML = maxNoteHtml(cap);
-          tdN.appendChild(capNote);
-        }
         if (showDisc) {
           const note = document.createElement('div');
           note.className = 'mt-1 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] leading-relaxed text-slate-600';
@@ -2950,7 +2944,7 @@ th,td{word-break:break-all;overflow-wrap:anywhere;}
     }
 
     /* Standard 행 추가 헬퍼 */
-    function stdAddRow(tbody, label, billing, grossMonthly, grossAnnual, unitMain, unitSub, discPct, totals, cap) {
+    function stdAddRow(tbody, label, billing, grossMonthly, grossAnnual, unitMain, unitSub, discPct, totals) {
       var dp = discPct || 0;
       var discAmt = grossAnnual > 0 && dp > 0 ? Math.round(grossAnnual * dp / 100) : 0;
       var netAnnual = grossAnnual - discAmt;
@@ -2971,12 +2965,6 @@ th,td{word-break:break-all;overflow-wrap:anywhere;}
       var lbSpan = document.createElement('span'); lbSpan.textContent = lbMain; nameDiv.appendChild(lbSpan);
       if (lbSub) { var lbSubSpan = document.createElement('span'); lbSubSpan.className = 'text-[11px] font-normal text-slate-500 whitespace-nowrap'; lbSubSpan.textContent = lbSub; nameDiv.appendChild(lbSubSpan); }
       tdN.appendChild(nameDiv);
-      if (cap && cap.capped) {
-        var capNote = document.createElement('div');
-        capNote.className = 'mt-1 rounded-md border border-amber-200 bg-amber-50 px-2 py-1 text-[11px] leading-relaxed text-slate-600';
-        capNote.innerHTML = maxNoteHtml(cap);
-        tdN.appendChild(capNote);
-      }
       if (showDisc) {
         var note = document.createElement('div');
         note.className = 'mt-1 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-[11px] leading-relaxed text-slate-600';
@@ -3472,8 +3460,8 @@ th,td{word-break:break-all;overflow-wrap:anywhere;}
         var discId = a.id.replace('std-svc-','std-disc-');
         /* MAX(상한) 적용 — 설정의 부가서비스 MAX 공통 사용 */
         var cap = applyAddonMax(a.id.replace('std-svc-',''), a.billing, r.m, r.a);
-        if (cap.capped) { r.m = cap.gm; r.a = cap.ga; r.u = formatWon(cap.max); r.us = 'MAX·' + cap.period; }
-        stdAddRow(tbody, a.label, a.billing, r.m, r.a, r.u, r.us, stdDisc(discId), totals, cap);
+        if (cap.capped) { r.m = cap.gm; r.a = cap.ga; r.u = scaleUnitForMax(r.u, cap); }
+        stdAddRow(tbody, a.label, a.billing, r.m, r.a, r.u, r.us, stdDisc(discId), totals);
       });
 
       /* Standard 커스텀 항목 */
